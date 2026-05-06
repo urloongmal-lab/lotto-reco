@@ -390,6 +390,35 @@ button:hover { filter: brightness(1.05); }
   .howto-list { line-height: 1.42; font-size: .92rem; }
   .howto-list li + li { margin-top: 4px; }
   .actions { grid-template-columns: 1fr 1fr; }
+  .results { gap: 8px; }
+  .ticket { padding: 9px 10px; min-height: auto; }
+  .ticket-core { gap: 6px; }
+  .ticket-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .ticket h3 { font-size: .96rem; }
+  .badge { padding: 4px 8px; font-size: .72rem; }
+  .balls { gap: 3px; }
+  .ball { width: 24px; height: 24px; font-size: .82rem; }
+  .ticket-options { gap: 6px; }
+  .ticket-rules { gap: 6px; }
+  .rule-field { gap: 4px; font-size: .8rem; }
+  .rule-field select { min-height: 40px; padding: 8px 9px; }
+  .ticket-switches { gap: 6px; }
+  .stat-toggle { gap: 4px; }
+  .stat-title { font-size: .78rem; }
+  .switch {
+    min-height: 40px;
+    padding: 7px 9px;
+    gap: 6px;
+    border-radius: 12px;
+  }
+  .switch-stat { font-size: .68rem; }
+  .switch input { width: 30px; height: 16px; }
+  .switch input::after { width: 12px; height: 12px; }
+  .switch input:checked::after { transform: translateX(14px); }
   .ticket-rules { grid-template-columns: 1fr; }
   .ticket-main { grid-template-columns: 1fr; }
   .ticket-options { padding-left:0; border-left:0; grid-template-columns: 1fr; }
