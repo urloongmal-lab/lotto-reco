@@ -76,17 +76,17 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
   margin-top: 2px;
 }
 .meta-inline {
-  display:flex;
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap:10px;
-  align-items:center;
-  flex-wrap:nowrap;
+  align-items:stretch;
 }
 .data-info {
   flex:1 1 auto;
   min-width: 0;
 }
 .data-info strong { color: var(--text); }
-.meta-inline > button { flex: 0 0 auto; white-space: nowrap; }
+.meta-inline > button { flex: 0 0 auto; white-space: nowrap; height: 100%; }
 .panel { padding:16px 18px; margin-bottom:0; }
 .rules-row {
   display:flex;
@@ -367,15 +367,27 @@ button:hover { filter: brightness(1.05); }
   .rules-row { flex-direction:column; }
   .rule-selects { flex-basis:auto; width:100%; }
   .meta { min-width: 0; }
-  button.refresh-btn { width: 100%; }
-  .meta-inline { gap: 8px; }
+  button.refresh-btn { width: auto; padding: 10px 12px; }
+  .meta-inline {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
   .meta-inline > .data-info { min-width: 0; }
-  .meta-box { padding: 8px 10px; font-size: .92rem; }
+  .meta-box {
+    padding: 8px 10px;
+    font-size: .84rem;
+    line-height: 1.28;
+    word-break: keep-all;
+  }
   .meta-tools { gap: 6px; }
-  .hero { padding: 18px 16px 14px; gap: 12px; }
-  .panel { padding: 14px; }
+  .hero { padding: 16px 14px 12px; gap: 10px; }
+  h1 { font-size: 1.5rem; line-height: 1.18; }
+  .warning { font-size: .88rem; padding: 7px 10px; line-height: 1.35; }
+  .sub.intro { font-size: .9rem; line-height: 1.42; }
+  .panel { padding: 12px 14px; }
   .howto-panel { padding: 12px 14px; }
-  .howto-list { line-height: 1.42; }
+  .howto-panel h2 { font-size: .98rem; }
+  .howto-list { line-height: 1.42; font-size: .92rem; }
   .howto-list li + li { margin-top: 4px; }
   .actions { grid-template-columns: 1fr 1fr; }
   .ticket-rules { grid-template-columns: 1fr; }
