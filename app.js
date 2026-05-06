@@ -59,10 +59,9 @@ function setRuleSummary() {
   $('dataInfo').textContent = `전수 데이터: ${state.data.rounds.length.toLocaleString()}회차`;
   $('ruleSummary').innerHTML = `
     <div class="rule-accordion">
-      <p class="rule-intro"><span class="rule-line">이 도구는 과거 기록을 바탕으로 번호 선택을 돕는 참고용 서비스입니다.</span></p>
       <p class="rule-intro"><span class="rule-line">아래 규칙들은 1회차부터 현재 ${latest.round}차까지의 누적 기록을 바탕으로 계산했습니다.</span></p>
       <details class="rule-item">
-        <summary>홀짝 3:3</summary>
+        <summary>홀짝</summary>
         <p>
           <span class="rule-line">홀수와 짝수의 개수가 3:3에 가까운 조합을 우선하도록 점수를 줍니다.</span>
           <span class="rule-line">1~${latest.round}회차 분석: 3:3 정확 일치 ${stats.oddExact}/${stats.total}회 (${pct(stats.oddExact, stats.total)}%). 최신회차는 홀수 ${latestOdds}개, 짝수 ${6 - latestOdds}개입니다.</span>
@@ -70,7 +69,7 @@ function setRuleSummary() {
         </p>
       </details>
       <details class="rule-item">
-        <summary>구간 분포 2:2:2</summary>
+        <summary>구간 분포</summary>
         <p>
           <span class="rule-line">1~15, 16~30, 31~45 구간이 2:2:2에 가까운 조합을 우선하도록 점수를 줍니다.</span>
           <span class="rule-line">1~${latest.round}회차 분석: 2:2:2 정확 일치 ${stats.bucketExact}/${stats.total}회 (${pct(stats.bucketExact, stats.total)}%). 최신회차는 ${latestLow}:${latestMid}:${latestHigh}입니다.</span>
@@ -368,7 +367,6 @@ function renderTickets() {
               ${fixed ? '<span class="badge muted">모든 규칙 최고 확률 고정</span>' : ''}
             </div>
             <div class="balls">${balls}</div>
-            <div class="reason">${explainScore(item.meta)}</div>
           </div>
           <div class="ticket-options">
             <div class="ticket-rules">
@@ -394,7 +392,6 @@ function updateSingleTicket(index) {
   const settings = readCardSettings(card);
   const meta = scoreTicket(item.nums, state.latest, settings);
   state.generated[index] = { ...item, meta, settings };
-  card.querySelector('.reason').textContent = explainScore(meta);
 }
 
 function currentDataSeemsFresh(data) {

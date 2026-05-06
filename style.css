@@ -42,6 +42,7 @@ body {
 .eyebrow { color: var(--accent); margin:0 0 8px; font-size:.9rem; font-weight:700; letter-spacing:.02em; }
 h1 { margin:0 0 10px; font-size:1.9rem; }
 .sub { margin:0; color:var(--muted); line-height:1.45; }
+.intro { margin-top: 8px; }
 .warning {
   margin: 8px 0 0;
   color: #ffcb8a;
@@ -51,6 +52,13 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
   border-radius: 999px;
   display: inline-flex;
   padding: 8px 12px;
+}
+.howto-panel h2 { margin: 0 0 8px; font-size: 1.02rem; }
+.howto-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 .meta { min-width: 260px; display:grid; gap:8px; color:var(--muted); }
 .meta-box {
@@ -197,7 +205,6 @@ button:hover { filter: brightness(1.05); }
 }
 .ball.bonus { background: linear-gradient(180deg, #ffb15f, #ff8f1f); color:#1a1208; border-color:#ffb15f; }
 .ball.bonus.empty { background: transparent; border: 1px dashed #3a414b; }
-.reason { font-size:.82rem; color: var(--muted); line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .rule-line { display:block; }
 .rule-accent { color: var(--accent); font-weight: 800; }
 .ticket-rules {
