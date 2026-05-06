@@ -60,6 +60,7 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
   color: var(--muted);
   line-height: 1.5;
 }
+.howto-list strong { color: #fff; font-weight: 800; }
 .meta { min-width: 260px; display:grid; gap:8px; color:var(--muted); }
 .meta-box {
   background: var(--panel-soft);
@@ -83,6 +84,7 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
 .data-info {
   flex:1 1 190px;
 }
+.data-info strong { color: var(--text); }
 .panel { padding:16px 18px; margin-bottom:0; }
 .rules-row {
   display:flex;
@@ -360,6 +362,15 @@ button:hover { filter: brightness(1.05); }
   .meta { min-width: 0; }
   button.refresh-btn { width: 100%; }
   .meta-inline { flex-direction:column; }
+  .meta-inline > * { width: 100%; }
+  .data-info { flex: 1 1 auto; width:100%; }
+  .meta-box { padding: 8px 10px; font-size: .92rem; }
+  .meta-tools { gap: 6px; }
+  .hero { padding: 18px 16px 14px; gap: 12px; }
+  .panel { padding: 14px; }
+  .howto-panel { padding: 12px 14px; }
+  .howto-list { line-height: 1.42; }
+  .howto-list li + li { margin-top: 4px; }
   .ticket-rules { grid-template-columns: 1fr; }
   .ticket-main { grid-template-columns: 1fr; }
   .ticket-options { padding-left:0; border-left:0; grid-template-columns: 1fr; }
