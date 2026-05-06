@@ -244,6 +244,23 @@ function explainScore(meta) {
   return `홀짝 ${meta.odd}:${6 - meta.odd} · 구간 ${meta.bucket.join(':')} · 연속쌍 ${meta.consec}개 · 직전중복 ${meta.overlap}개`;
 }
 
+function formatCopyText() {
+  return state.generated
+    .slice(0, 5)
+    .map((item, idx) => `추천${idx + 1} : ${item.nums.slice(0, 6).join(' ')}`)
+    .join('\n');
+}
+
+async function copyCurrentTickets() {
+  if (!state.generated.length) {
+    state.generated = generateCandidates(5);
+    renderTickets();
+  }
+  const text = formatCopyText();
+  await navigator.clipboard.writeText(text);
+  $('refreshNote').textContent = '추천번호를 클립보드에 복사했습니다.';
+}
+
 function generateCandidates(count = 5) {
   const latest = state.latest;
   const settings = getCurrentCardSettings(count);
@@ -447,6 +464,7 @@ async function init() {
     state.generated = generateCandidates(5);
     renderTickets();
   });
+  $('copyBtn').addEventListener('click', copyCurrentTickets);
   $('refreshBtn').addEventListener('click', refreshLatest);
   $('results').addEventListener('change', (e) => {
     if (!(e.target instanceof HTMLInputElement)) return;

@@ -135,7 +135,12 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
 .rule-card strong { display:block; font-size:.98rem; line-height:1.45; }
 .rule-card small { color: var(--muted); }
 .toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:0; }
+.actions {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:8px;
+  margin-top:0;
+}
 button {
   border:0; border-radius:12px; padding:9px 12px; font-weight:700;
   background: linear-gradient(135deg, var(--accent), #ffac52); color:#1a1208; cursor:pointer;
@@ -371,6 +376,7 @@ button:hover { filter: brightness(1.05); }
   .howto-panel { padding: 12px 14px; }
   .howto-list { line-height: 1.42; }
   .howto-list li + li { margin-top: 4px; }
+  .actions { grid-template-columns: 1fr 1fr; }
   .ticket-rules { grid-template-columns: 1fr; }
   .ticket-main { grid-template-columns: 1fr; }
   .ticket-options { padding-left:0; border-left:0; grid-template-columns: 1fr; }
