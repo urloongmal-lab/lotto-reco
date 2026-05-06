@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로또 번호 회피 규칙 추천기</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">로컬 테스트 버전</p>
+        <h1>로또 번호 회피 규칙 추천기</h1>
+        <p class="warning">※ 확률 보장은 아니고, 역사적 저빈도 패턴을 피하는 추천 보조 도구입니다.</p>
+      </div>
+      <div class="meta">
+        <div>최신 회차: <strong id="latestRound">-</strong></div>
+        <div>추첨일: <strong id="latestDate">-</strong></div>
+        <div>데이터 상태: <strong id="dataStatus">로드 대기</strong></div>
+        <div class="meta-tools">
+          <div class="meta-inline">
+            <div class="meta-box data-info" id="dataInfo">전수 데이터: -</div>
+            <button id="refreshBtn" class="secondary refresh-btn">최신화</button>
+          </div>
+          <p id="refreshNote" class="note"></p>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel rules-row">
+      <div class="rules-main" id="ruleSummary"></div>
+    </section>
+
+    <section class="toolbar panel">
+      <div class="actions">
+        <button id="generateBtn">추천 번호 생성</button>
+      </div>
+    </section>
+
+    <section class="results" id="results"></section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
