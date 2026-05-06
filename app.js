@@ -59,6 +59,8 @@ function setRuleSummary() {
   $('dataInfo').textContent = `전수 데이터: ${state.data.rounds.length.toLocaleString()}회차`;
   $('ruleSummary').innerHTML = `
     <div class="rule-accordion">
+      <p class="rule-intro"><span class="rule-line">이 도구는 과거 기록을 바탕으로 번호 선택을 돕는 참고용 서비스입니다.</span></p>
+      <p class="rule-intro"><span class="rule-line">아래 규칙들은 1회차부터 현재 ${latest.round}차까지의 누적 기록을 바탕으로 계산했습니다.</span></p>
       <details class="rule-item">
         <summary>홀짝 3:3</summary>
         <p>
@@ -184,8 +186,8 @@ function cardDraftSettings() {
   return {
     odd: analytics.topOdd?.[0]?.[0] ?? 3,
     bucket: analytics.topBucket?.[0]?.[0] ?? '2:2:2',
-    consecutive: 0,
-    repeat: 0,
+    consecutive: analytics.topConsec?.[0]?.[0] ?? 0,
+    repeat: analytics.topRepeat?.[0]?.[0] ?? 0,
   };
 }
 
@@ -315,9 +317,9 @@ function buildStatToggle(name, label, options, value, disabled = false) {
     <div class="stat-toggle ${disabled ? 'locked' : ''}">
       <div class="stat-title">${label}</div>
       <label class="switch stat-switch">
-        <span class="switch-stat left">${left.value}개 ${left.pct}%</span>
+        <span class="switch-stat left">${left.value}개 (${left.pct}%)</span>
         <input type="checkbox" data-switch="${name}" ${Number(value) === 1 ? 'checked' : ''} ${disabled ? 'disabled' : ''} />
-        <span class="switch-stat right">${right.value}개 ${right.pct}%</span>
+        <span class="switch-stat right">${right.value}개 (${right.pct}%)</span>
       </label>
     </div>
   `;

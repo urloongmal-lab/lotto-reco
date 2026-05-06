@@ -100,7 +100,8 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 8px 10px;
+  min-height: 44px;
+  padding: 10px 10px;
   outline: none;
 }
 .toolbar { padding: 8px 10px; }
@@ -209,16 +210,17 @@ button:hover { filter: brightness(1.05); }
   display:grid;
   gap:6px;
   color: var(--muted);
-  font-size: .78rem;
+  font-size: .84rem;
 }
-.rule-field span { color: var(--muted); }
+.rule-field span { color: var(--text); font-weight: 700; }
 .rule-field select {
   width:100%;
   background:#232932;
   color:var(--text);
   border:1px solid var(--line);
   border-radius:10px;
-  padding:6px 8px;
+  min-height: 44px;
+  padding:10px 10px;
   outline:none;
 }
 .rule-field select:disabled {
@@ -240,9 +242,9 @@ button:hover { filter: brightness(1.05); }
   min-width:0;
 }
 .stat-title {
-  color: var(--accent2);
-  font-size: .78rem;
-  font-weight: 800;
+  color: var(--text);
+  font-size: .84rem;
+  font-weight: 700;
   padding-left: 2px;
 }
 .switch {
@@ -259,6 +261,7 @@ button:hover { filter: brightness(1.05); }
   cursor:pointer;
   user-select:none;
   width:100%;
+  min-height: 44px;
 }
 .stat-toggle.locked .switch {
   cursor:not-allowed;
@@ -267,7 +270,7 @@ button:hover { filter: brightness(1.05); }
 }
 .switch-stat {
   color: var(--muted);
-  font-size: .7rem;
+  font-size: .74rem;
   white-space: nowrap;
 }
 .switch input {
@@ -307,6 +310,12 @@ button:hover { filter: brightness(1.05); }
   color:#7e8694;
 }
 .rule-accordion { display:grid; gap:10px; }
+.rule-intro {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: .92rem;
+}
 .rule-item {
   background: var(--panel-soft);
   border: 1px solid var(--line);
