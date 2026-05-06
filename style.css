@@ -53,6 +53,7 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
   display: inline-flex;
   padding: 8px 12px;
 }
+.warning-line { display: inline; }
 .howto-panel h2 { margin: 0 0 8px; font-size: 1.02rem; }
 .howto-list {
   margin: 0;
@@ -383,6 +384,8 @@ button:hover { filter: brightness(1.05); }
   .hero { padding: 16px 14px 12px; gap: 10px; }
   h1 { font-size: 1.5rem; line-height: 1.18; }
   .warning { font-size: .88rem; padding: 7px 10px; line-height: 1.35; }
+  .warning { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; border-radius: 18px; }
+  .warning-line { display: block; }
   .sub.intro { font-size: .9rem; line-height: 1.42; }
   .panel { padding: 12px 14px; }
   .howto-panel { padding: 12px 14px; }
