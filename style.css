@@ -78,13 +78,15 @@ h1 { margin:0 0 10px; font-size:1.9rem; }
 .meta-inline {
   display:flex;
   gap:10px;
-  align-items:stretch;
-  flex-wrap:wrap;
+  align-items:center;
+  flex-wrap:nowrap;
 }
 .data-info {
-  flex:1 1 190px;
+  flex:1 1 auto;
+  min-width: 0;
 }
 .data-info strong { color: var(--text); }
+.meta-inline > button { flex: 0 0 auto; white-space: nowrap; }
 .panel { padding:16px 18px; margin-bottom:0; }
 .rules-row {
   display:flex;
@@ -366,9 +368,8 @@ button:hover { filter: brightness(1.05); }
   .rule-selects { flex-basis:auto; width:100%; }
   .meta { min-width: 0; }
   button.refresh-btn { width: 100%; }
-  .meta-inline { flex-direction:column; }
-  .meta-inline > * { width: 100%; }
-  .data-info { flex: 1 1 auto; width:100%; }
+  .meta-inline { gap: 8px; }
+  .meta-inline > .data-info { min-width: 0; }
   .meta-box { padding: 8px 10px; font-size: .92rem; }
   .meta-tools { gap: 6px; }
   .hero { padding: 18px 16px 14px; gap: 12px; }
