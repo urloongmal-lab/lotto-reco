@@ -386,6 +386,7 @@ button:hover { filter: brightness(1.05); }
   .warning { font-size: .88rem; padding: 7px 10px; line-height: 1.35; }
   .warning { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; border-radius: 18px; }
   .warning-line { display: block; }
+  .warning-line + .warning-line { padding-left: 1.2em; }
   .sub.intro { font-size: .9rem; line-height: 1.42; }
   .panel { padding: 12px 14px; }
   .howto-panel { padding: 12px 14px; }
