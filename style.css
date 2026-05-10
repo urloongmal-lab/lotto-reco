@@ -219,6 +219,10 @@ button:hover { filter: brightness(1.05); }
   border-color: #b26bff;
   box-shadow: 0 0 0 2px rgba(178, 107, 255, .18);
 }
+.ball.consecutive-hit {
+  border-color: #5aa9ff;
+  box-shadow: 0 0 0 2px rgba(90, 169, 255, .18);
+}
 .rule-line { display:block; }
 .rule-accent { color: var(--accent); font-weight: 800; }
 .ticket-rules {

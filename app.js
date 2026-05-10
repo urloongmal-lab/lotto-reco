@@ -180,6 +180,11 @@ function isLatestNumber(n) {
   return !!state.latest?.numbers?.includes(n);
 }
 
+function isConsecutiveNumber(n, nums) {
+  const set = new Set(nums);
+  return set.has(n - 1) || set.has(n + 1);
+}
+
 function countConsecutivePairs(nums) {
   const sorted = [...nums].sort((x, y) => x - y);
   let c = 0;
@@ -408,7 +413,12 @@ function renderTickets() {
       `;
     }
     const nums = item.nums.slice(0, 6);
-    const balls = nums.map((n) => `<span class="ball ${isLatestNumber(n) ? 'repeat-hit' : ''}">${n}</span>`).join('') + `<span class="ball bonus">+</span>`;
+    const balls = nums.map((n) => {
+      const classes = ['ball'];
+      if (isLatestNumber(n)) classes.push('repeat-hit');
+      if (isConsecutiveNumber(n, nums)) classes.push('consecutive-hit');
+      return `<span class="${classes.join(' ')}">${n}</span>`;
+    }).join('') + `<span class="ball bonus">+</span>`;
     return `
       <article class="ticket ${fixed ? 'locked' : ''}" data-index="${idx}">
         <div class="ticket-main">
