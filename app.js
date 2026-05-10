@@ -1,5 +1,4 @@
 const LOCAL_DATA_URL = './latest.json';
-const REMOTE_DATA_URL = 'https://raw.githubusercontent.com/hjleesm/lottery-data/main/latest.json';
 const START_ROUND_DATE = new Date('2002-12-07T00:00:00+09:00');
 const REFRESH_CUTOFF_HOUR = 21;
 
@@ -457,6 +456,15 @@ function withCacheBust(url, key = Date.now()) {
   return `${url}${sep}v=${encodeURIComponent(key)}`;
 }
 
+function normalizeRound(round) {
+  return {
+    round: Number(round.round),
+    date: String(round.date),
+    numbers: (round.numbers || []).map(Number),
+    bonus: Number(round.bonus),
+  };
+}
+
 async function loadLocalData() {
   const res = await fetch(LOCAL_DATA_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`local load failed: ${res.status}`);
@@ -464,10 +472,29 @@ async function loadLocalData() {
   return data;
 }
 
-async function loadRemoteData(expectedRound) {
-  const res = await fetch(withCacheBust(REMOTE_DATA_URL, `${expectedRound}-${Date.now()}`), { cache: 'no-store' });
-  if (!res.ok) throw new Error(`remote load failed: ${res.status}`);
-  return await res.json();
+async function loadOfficialLatestData() {
+  const res = await fetch(withCacheBust('/api/lotto-latest', Date.now()), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`official latest load failed: ${res.status}`);
+  const data = await res.json();
+  if (!data?.round || !Array.isArray(data.numbers) || !data.numbers.length) {
+    throw new Error('official latest payload invalid');
+  }
+  return normalizeRound(data);
+}
+
+function mergeWithOfficialLatest(localData, officialLatest) {
+  const rounds = [officialLatest, ...(localData.rounds || []).filter((r) => Number(r.round) !== Number(officialLatest.round)).map(normalizeRound)];
+  return { ...localData, rounds };
+}
+
+async function loadCurrentData() {
+  const localData = await loadLocalData();
+  try {
+    const officialLatest = await loadOfficialLatestData();
+    return mergeWithOfficialLatest(localData, officialLatest);
+  } catch {
+    return { ...localData, rounds: (localData.rounds || []).map(normalizeRound) };
+  }
 }
 
 function ingestData(data) {
@@ -477,8 +504,8 @@ function ingestData(data) {
   state.expectedRound = expectedRoundNow();
   state.expectedDate = expectedDrawDateNow();
   state.analytics = analyzeDataset();
-  $('latestRound').textContent = `${state.expectedRound ?? state.latest.round}회`;
-  $('latestDate').textContent = fmtDate(fmtKstDate(state.expectedDate || new Date()));
+  $('latestRound').textContent = `${state.latest.round}회`;
+  $('latestDate').textContent = fmtDate(state.latest.date);
   setRuleSummary();
 }
 
@@ -486,12 +513,12 @@ async function refreshLatest() {
   const expected = expectedRoundNow();
   $('refreshNote').textContent = `현재 시각 기준 ${expected}회차를 확인 중...`;
   try {
-    const remote = await loadRemoteData(expected);
-    ingestData(remote);
+    const current = await loadCurrentData();
+    ingestData(current);
     regenerateGeneratedTickets();
     $('refreshNote').textContent = state.latest.round >= expected
       ? `최신화 완료: ${state.latest.round}회까지 반영됨`
-      : `원본 데이터는 아직 ${state.latest.round}회까지만 있습니다. 현재 시각 기준 기대 회차는 ${expected}회입니다.`;
+      : `현재 시각 기준 기대 회차는 ${expected}회지만, 최신 데이터 소스를 아직 확인하지 못했습니다.`;
     if (state.generated.length) renderTickets();
   } catch (err) {
     $('refreshNote').textContent = `최신화 실패: ${err.message}`;
@@ -513,17 +540,17 @@ async function init() {
   });
 
   try {
-    const data = await loadLocalData();
+    const data = await loadCurrentData();
     ingestData(data);
     const fresh = currentDataSeemsFresh(data);
     $('refreshNote').textContent = fresh
-      ? `로컬 데이터가 현재 시각 기준으로 최신입니다. (기대 최신 ${state.expectedRound}회)`
-      : `로컬 데이터는 ${data.rounds[0].round}회까지이고, 현재 시각 기준 기대 최신은 ${state.expectedRound}회입니다.`;
-    setStatus('로컬 데이터 로드 완료');
+      ? `현재 시각 기준 최신 ${state.expectedRound}회까지 반영됨`
+      : `현재 시각 기준 기대 최신은 ${state.expectedRound}회입니다.`;
+    setStatus('최신 데이터 로드 완료');
     renderTickets();
   } catch (err) {
     setStatus(`로드 실패: ${err.message}`);
-    $('refreshNote').textContent = 'local latest.json을 읽지 못했습니다.';
+    $('refreshNote').textContent = '최신 데이터 소스를 읽지 못했습니다.';
     renderTickets();
   }
 }
