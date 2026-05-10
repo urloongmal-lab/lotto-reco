@@ -8,6 +8,8 @@ const state = {
   data: null,
   roundsByNum: new Map(),
   latest: null,
+  expectedRound: null,
+  expectedDate: null,
   generated: [],
   analytics: null,
 };
@@ -30,6 +32,14 @@ function latestDrawDateKST(now = kstNow()) {
   return target;
 }
 
+function expectedRoundNow(now = kstNow()) {
+  return roundForDate(latestDrawDateKST(now));
+}
+
+function expectedDrawDateNow(now = kstNow()) {
+  return latestDrawDateKST(now);
+}
+
 function roundForDate(date) {
   const diffDays = Math.floor((date - START_ROUND_DATE) / 86400000);
   return 1 + Math.floor(diffDays / 7);
@@ -37,6 +47,19 @@ function roundForDate(date) {
 
 function fmtDate(dateStr) {
   return dateStr.replace(/-/g, '.');
+}
+
+function fmtKstDate(date) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const year = parts.find((p) => p.type === 'year')?.value;
+  const month = parts.find((p) => p.type === 'month')?.value;
+  const day = parts.find((p) => p.type === 'day')?.value;
+  return `${year}-${month}-${day}`;
 }
 
 function setStatus(text) {
@@ -59,7 +82,7 @@ function setRuleSummary() {
   $('dataInfo').textContent = `전수 데이터: ${state.data.rounds.length.toLocaleString()}회차`;
   $('ruleSummary').innerHTML = `
     <div class="rule-accordion">
-      <p class="rule-intro"><span class="rule-line">아래 규칙들은 1회차부터 현재 ${latest.round}차까지의 누적 기록을 바탕으로 계산했습니다.</span></p>
+      <p class="rule-intro"><span class="rule-line">아래 규칙들은 1회차부터 현재 데이터의 최신 ${latest.round}차까지의 누적 기록을 바탕으로 계산했습니다.</span><span class="rule-line">현재 시각 기준 기대 최신 회차는 ${state.expectedRound ?? latest.round}차입니다.</span></p>
       <details class="rule-item">
         <summary>홀짝</summary>
         <p>
@@ -411,10 +434,15 @@ function updateSingleTicket(index) {
   state.generated[index] = { ...item, meta, settings };
 }
 
-function currentDataSeemsFresh(data) {
+function currentDataSeemsFresh(data, now = kstNow()) {
   const latest = data.rounds[0];
-  const expected = roundForDate(latestDrawDateKST());
+  const expected = expectedRoundNow(now);
   return latest.round >= expected;
+}
+
+function withCacheBust(url, key = Date.now()) {
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}v=${encodeURIComponent(key)}`;
 }
 
 async function loadLocalData() {
@@ -424,8 +452,8 @@ async function loadLocalData() {
   return data;
 }
 
-async function loadRemoteData() {
-  const res = await fetch(REMOTE_DATA_URL, { cache: 'no-store' });
+async function loadRemoteData(expectedRound) {
+  const res = await fetch(withCacheBust(REMOTE_DATA_URL, `${expectedRound}-${Date.now()}`), { cache: 'no-store' });
   if (!res.ok) throw new Error(`remote load failed: ${res.status}`);
   return await res.json();
 }
@@ -434,25 +462,23 @@ function ingestData(data) {
   state.data = data;
   state.roundsByNum = new Map(data.rounds.map((r) => [r.round, r]));
   state.latest = data.rounds[0];
+  state.expectedRound = expectedRoundNow();
+  state.expectedDate = expectedDrawDateNow();
   state.analytics = analyzeDataset();
-  $('latestRound').textContent = `${state.latest.round}회`;
-  $('latestDate').textContent = fmtDate(state.latest.date);
+  $('latestRound').textContent = `${state.expectedRound ?? state.latest.round}회`;
+  $('latestDate').textContent = fmtDate(fmtKstDate(state.expectedDate || new Date()));
   setRuleSummary();
 }
 
 async function refreshLatest() {
-  const expected = roundForDate(latestDrawDateKST());
-  if (state.latest && state.latest.round >= expected) {
-    $('refreshNote').textContent = `이미 최신입니다. (현재 ${state.latest.round}회, 기대 최신 ${expected}회)`;
-    return;
-  }
-  $('refreshNote').textContent = '온라인 최신화 중...';
+  const expected = expectedRoundNow();
+  $('refreshNote').textContent = `현재 시각 기준 ${expected}회차를 확인 중...`;
   try {
-    const remote = await loadRemoteData();
+    const remote = await loadRemoteData(expected);
     ingestData(remote);
     $('refreshNote').textContent = state.latest.round >= expected
       ? `최신화 완료: ${state.latest.round}회까지 반영됨`
-      : `새 데이터는 없지만 최신 데이터로 갱신했습니다.`;
+      : `원본 데이터는 아직 ${state.latest.round}회까지만 있습니다. 현재 시각 기준 기대 회차는 ${expected}회입니다.`;
     if (state.generated.length) renderTickets();
   } catch (err) {
     $('refreshNote').textContent = `최신화 실패: ${err.message}`;
@@ -477,7 +503,9 @@ async function init() {
     const data = await loadLocalData();
     ingestData(data);
     const fresh = currentDataSeemsFresh(data);
-    $('refreshNote').textContent = fresh ? '로컬 데이터가 최신으로 보입니다. 온라인 조회 생략 가능.' : '로컬 데이터가 최신이 아닐 수 있습니다. 필요할 때만 최신화하세요.';
+    $('refreshNote').textContent = fresh
+      ? `로컬 데이터가 현재 시각 기준으로 최신입니다. (기대 최신 ${state.expectedRound}회)`
+      : `로컬 데이터는 ${data.rounds[0].round}회까지이고, 현재 시각 기준 기대 최신은 ${state.expectedRound}회입니다.`;
     setStatus('로컬 데이터 로드 완료');
     renderTickets();
   } catch (err) {
