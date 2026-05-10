@@ -290,6 +290,14 @@ function generateCandidates(count = 5) {
   return Array.from({ length: count }, (_, idx) => bestTicketForSettings(latest, settings[idx] ?? cardDraftSettings()));
 }
 
+function regenerateGeneratedTickets() {
+  if (!state.generated.length) return;
+  state.generated = state.generated.map((item) => {
+    if (!item?.settings) return item;
+    return bestTicketForSettings(state.latest, item.settings);
+  });
+}
+
 function getCurrentCardSettings(count) {
   const existing = $('results').querySelectorAll('.ticket');
   if (existing.length >= count) {
@@ -476,6 +484,7 @@ async function refreshLatest() {
   try {
     const remote = await loadRemoteData(expected);
     ingestData(remote);
+    regenerateGeneratedTickets();
     $('refreshNote').textContent = state.latest.round >= expected
       ? `최신화 완료: ${state.latest.round}회까지 반영됨`
       : `원본 데이터는 아직 ${state.latest.round}회까지만 있습니다. 현재 시각 기준 기대 회차는 ${expected}회입니다.`;
