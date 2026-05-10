@@ -23,7 +23,7 @@ module.exports = async function handler(req, res) {
     }
 
     const latest = [...lt645].sort((a, b) => Number(b.ltEpsd) - Number(a.ltEpsd))[0];
-    res.setHeader('Cache-Control', 'no-store, max-age=0');
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400');
     res.status(200).json({
       round: Number(latest.ltEpsd),
       date: String(latest.ltRflYmd).replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'),

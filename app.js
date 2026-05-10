@@ -1,6 +1,7 @@
 const LOCAL_DATA_URL = './latest.json';
 const START_ROUND_DATE = new Date('2002-12-07T00:00:00+09:00');
 const REFRESH_CUTOFF_HOUR = 21;
+const CURRENT_DATA_CACHE_KEY = 'lotto-current-data:v2';
 
 const $ = (id) => document.getElementById(id);
 const state = {
@@ -475,11 +476,36 @@ function normalizeRound(round) {
   };
 }
 
+function normalizeData(data) {
+  return { ...data, rounds: (data.rounds || []).map(normalizeRound) };
+}
+
+function saveCurrentDataCache(data) {
+  try {
+    localStorage.setItem(CURRENT_DATA_CACHE_KEY, JSON.stringify({
+      savedAt: Date.now(),
+      latestRound: Number(data?.rounds?.[0]?.round || 0),
+      data,
+    }));
+  } catch {}
+}
+
+function loadCurrentDataCache(expectedRound) {
+  try {
+    const raw = localStorage.getItem(CURRENT_DATA_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.data?.rounds?.length) return null;
+    const latestRound = Number(parsed.latestRound || parsed.data.rounds[0]?.round || 0);
+    if (!expectedRound || latestRound >= expectedRound) return parsed.data;
+  } catch {}
+  return null;
+}
+
 async function loadLocalData() {
   const res = await fetch(LOCAL_DATA_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`local load failed: ${res.status}`);
-  const data = await res.json();
-  return data;
+  return normalizeData(await res.json());
 }
 
 async function loadOfficialLatestData() {
@@ -497,13 +523,22 @@ function mergeWithOfficialLatest(localData, officialLatest) {
   return { ...localData, rounds };
 }
 
-async function loadCurrentData() {
+async function loadCurrentData(force = false) {
+  const expected = expectedRoundNow();
+  if (!force) {
+    const cached = loadCurrentDataCache(expected);
+    if (cached) return normalizeData(cached);
+  }
   const localData = await loadLocalData();
   try {
     const officialLatest = await loadOfficialLatestData();
-    return mergeWithOfficialLatest(localData, officialLatest);
+    const merged = normalizeData(mergeWithOfficialLatest(localData, officialLatest));
+    saveCurrentDataCache(merged);
+    return merged;
   } catch {
-    return { ...localData, rounds: (localData.rounds || []).map(normalizeRound) };
+    const normalized = normalizeData(localData);
+    saveCurrentDataCache(normalized);
+    return normalized;
   }
 }
 
@@ -523,7 +558,7 @@ async function refreshLatest() {
   const expected = expectedRoundNow();
   $('refreshNote').textContent = `현재 시각 기준 ${expected}회차를 확인 중...`;
   try {
-    const current = await loadCurrentData();
+    const current = await loadCurrentData(true);
     ingestData(current);
     regenerateGeneratedTickets();
     $('refreshNote').textContent = state.latest.round >= expected
