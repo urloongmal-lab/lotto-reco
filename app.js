@@ -177,6 +177,10 @@ function overlapCount(a, b) {
   return c;
 }
 
+function isLatestNumber(n) {
+  return !!state.latest?.numbers?.includes(n);
+}
+
 function countConsecutivePairs(nums) {
   const sorted = [...nums].sort((x, y) => x - y);
   let c = 0;
@@ -361,7 +365,7 @@ function buildStatToggle(name, label, options, value, disabled = false) {
   const left = options.find((opt) => Number(opt.value) === 0) ?? options[0] ?? { value: 0, pct: '0.0' };
   const right = options.find((opt) => Number(opt.value) === 1) ?? options[1] ?? { value: 1, pct: '0.0' };
   return `
-    <div class="stat-toggle ${disabled ? 'locked' : ''}">
+    <div class="stat-toggle ${name === 'repeat' ? 'repeat-toggle' : ''} ${disabled ? 'locked' : ''}">
       <div class="stat-title">${label}</div>
       <label class="switch stat-switch">
         <span class="switch-stat left">${left.value}개 (${left.pct}%)</span>
@@ -405,7 +409,7 @@ function renderTickets() {
       `;
     }
     const nums = item.nums.slice(0, 6);
-    const balls = nums.map((n) => `<span class="ball">${n}</span>`).join('') + `<span class="ball bonus">+</span>`;
+    const balls = nums.map((n) => `<span class="ball ${isLatestNumber(n) ? 'repeat-hit' : ''}">${n}</span>`).join('') + `<span class="ball bonus">+</span>`;
     return `
       <article class="ticket ${fixed ? 'locked' : ''}" data-index="${idx}">
         <div class="ticket-main">

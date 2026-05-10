@@ -215,6 +215,10 @@ button:hover { filter: brightness(1.05); }
 }
 .ball.bonus { background: linear-gradient(180deg, #ffb15f, #ff8f1f); color:#1a1208; border-color:#ffb15f; }
 .ball.bonus.empty { background: transparent; border: 1px dashed #3a414b; }
+.ball.repeat-hit {
+  border-color: #b26bff;
+  box-shadow: 0 0 0 2px rgba(178, 107, 255, .18);
+}
 .rule-line { display:block; }
 .rule-accent { color: var(--accent); font-weight: 800; }
 .ticket-rules {
@@ -316,8 +320,13 @@ button:hover { filter: brightness(1.05); }
   background: linear-gradient(135deg, var(--accent), #ffb15f);
   border-color: #ffb15f;
 }
+.repeat-toggle .switch input:checked {
+  background: linear-gradient(135deg, #8b5cf6, #b26bff);
+  border-color: #b26bff;
+}
 .switch input:checked::after { transform: translateX(16px); }
 .switch:has(input:checked) { color: var(--text); border-color: rgba(255,143,31,.35); }
+.repeat-toggle .switch:has(input:checked) { border-color: rgba(178,107,255,.45); }
 .switch input:disabled,
 .stat-toggle.locked input {
   opacity: .55;
